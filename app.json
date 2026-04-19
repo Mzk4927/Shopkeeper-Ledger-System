@@ -14,13 +14,11 @@
     "android": {
       "package": "com.zarar.khataapp"
     },
-    "extra": {
-      "eas": {
-        "projectId": "YOUR-PROJECT-ID-HERE"
-      }
-    },
     "plugins": [
       "expo-sharing"
-    ]
+    ],
+    "cli": {
+      "appVersionSource": "appJson"
+    }
   }
 }
