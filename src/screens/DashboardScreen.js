@@ -26,7 +26,6 @@ import {
   sendWhatsAppDueStatusWarning,
 } from '../utils/whatsapp';
 import { generateCustomerSlipPdf } from '../utils/pdfSlip';
-import { exportBackupFile } from '../utils/backup';
 
 export default function DashboardScreen({ currentUser, onLogout }) {
   const [customers, setCustomers] = useState([]);
@@ -39,6 +38,7 @@ export default function DashboardScreen({ currentUser, onLogout }) {
   const [creditDaysInput, setCreditDaysInput] = useState('');
   const [itemsInput, setItemsInput] = useState('');
   const [editingCustomerId, setEditingCustomerId] = useState(null);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [dueWarningGroups, setDueWarningGroups] = useState({
     dueTomorrow: [],
     dueToday: [],
@@ -347,20 +347,46 @@ export default function DashboardScreen({ currentUser, onLogout }) {
   };
 
   const handleExportBackup = async () => {
+    setShowSettingsMenu(false);
+    const { exportBackupFile } = await import('../utils/backup');
     await exportBackupFile();
+  };
+
+  const handleRestoreBackup = async () => {
+    setShowSettingsMenu(false);
+    const { restoreBackupFile } = await import('../utils/backup');
+    const restored = await restoreBackupFile();
+    if (restored) {
+      await loadData();
+    }
+  };
+
+  const handleLogout = () => {
+    setShowSettingsMenu(false);
+    onLogout();
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Udhaar Khata</Text>
-        <Text style={styles.headerSubText}>Signed in: {currentUser?.email}</Text>
-        <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
-          <Text style={styles.logoutBtnText}>Logout</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.backupBtn} onPress={handleExportBackup}>
-          <Text style={styles.backupBtnText}>Export Backup</Text>
-        </TouchableOpacity>
+      <View style={styles.bgAccentTop} />
+      <View style={styles.bgAccentBottom} />
+
+      <View style={styles.headerCard}>
+        <View style={styles.brandRow}>
+          <View style={styles.brandInfoRow}>
+            <View style={styles.brandMark}>
+              <Text style={styles.brandMarkText}>KH</Text>
+            </View>
+            <View>
+              <Text style={styles.headerText}>Udhaar Khata</Text>
+              <Text style={styles.headerSubText}>Signed in as {currentUser?.email}</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.settingsBtn} onPress={() => setShowSettingsMenu(true)}>
+            <Text style={styles.settingsBtnText}>⋮</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       
       <ScrollView contentContainerStyle={styles.contentContainer}>
@@ -500,47 +526,182 @@ export default function DashboardScreen({ currentUser, onLogout }) {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        visible={showSettingsMenu}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setShowSettingsMenu(false)}
+      >
+        <View style={styles.settingsOverlay}>
+          <TouchableOpacity
+            style={styles.settingsOverlayTap}
+            activeOpacity={1}
+            onPress={() => setShowSettingsMenu(false)}
+          />
+          <View style={styles.settingsMenuCard}>
+            <TouchableOpacity style={styles.settingsMenuItem} onPress={handleExportBackup}>
+              <Text style={styles.settingsMenuText}>Export Backup</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.settingsMenuItem} onPress={handleRestoreBackup}>
+              <Text style={styles.settingsMenuText}>Restore Backup</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.settingsMenuItem} onPress={handleLogout}>
+              <Text style={styles.settingsMenuTextDanger}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f4f4f4' },
-  contentContainer: { paddingBottom: 120 },
-  header: { padding: 20, backgroundColor: '#007BFF', alignItems: 'center' },
-  headerText: { color: 'white', fontSize: 24, fontWeight: 'bold' },
+  container: {
+    flex: 1,
+    backgroundColor: '#eef2ff',
+    overflow: 'hidden',
+  },
+  bgAccentTop: {
+    position: 'absolute',
+    width: 260,
+    height: 260,
+    borderRadius: 260,
+    backgroundColor: 'rgba(79, 70, 229, 0.08)',
+    top: -90,
+    right: -110,
+  },
+  bgAccentBottom: {
+    position: 'absolute',
+    width: 220,
+    height: 220,
+    borderRadius: 220,
+    backgroundColor: 'rgba(22, 163, 74, 0.08)',
+    bottom: -70,
+    left: -90,
+  },
+  contentContainer: { paddingBottom: 130, paddingTop: 4 },
+  headerCard: {
+    marginHorizontal: 14,
+    marginTop: 14,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 16,
+    shadowColor: '#0f172a',
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 4,
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  brandInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  brandMark: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: '#111827',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandMarkText: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+  },
+  headerText: { color: '#0f172a', fontSize: 24, fontWeight: '800' },
   headerSubText: {
     marginTop: 4,
-    color: '#dbeafe',
-    fontSize: 12,
+    color: '#64748b',
+    fontSize: 13,
     fontWeight: '600',
   },
-  logoutBtn: {
-    marginTop: 10,
-    backgroundColor: '#b91c1c',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+  settingsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: '#f1f5f9',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  logoutBtnText: {
-    color: 'white',
-    fontSize: 13,
+  settingsBtnText: {
+    color: '#1f2937',
+    fontSize: 20,
+    marginTop: -3,
     fontWeight: '700',
   },
-  backupBtn: {
-    marginTop: 10,
-    backgroundColor: '#0f766e',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+  settingsOverlay: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    paddingTop: 78,
+    paddingRight: 20,
   },
-  backupBtnText: {
-    color: 'white',
-    fontSize: 13,
+  settingsOverlayTap: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  },
+  settingsMenuCard: {
+    width: 200,
+    backgroundColor: 'white',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    shadowColor: '#0f172a',
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
+    overflow: 'hidden',
+  },
+  settingsMenuItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  settingsMenuText: {
+    color: '#0f172a',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  settingsMenuTextDanger: {
+    color: '#b91c1c',
+    fontSize: 14,
     fontWeight: '700',
   },
-  emptyText: { textAlign: 'center', marginTop: 50, fontSize: 16 },
-  fab: { position: 'absolute', bottom: 30, right: 20, backgroundColor: '#007BFF', padding: 15, borderRadius: 30 },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 50,
+    fontSize: 16,
+    color: '#475569',
+    fontWeight: '600',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 18,
+    backgroundColor: '#2563eb',
+    paddingVertical: 13,
+    paddingHorizontal: 16,
+    borderRadius: 28,
+    shadowColor: '#1d4ed8',
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 6,
+  },
   fabText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
   modalBackdrop: {
     flex: 1,
@@ -550,8 +711,8 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 20,
+    padding: 18,
   },
   modalTitle: {
     fontSize: 20,
@@ -561,10 +722,11 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d6d6d6',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderColor: '#cbd5e1',
+    borderRadius: 12,
+    backgroundColor: '#f8fafc',
+    paddingHorizontal: 14,
+    paddingVertical: 11,
     marginBottom: 10,
   },
   textArea: {
@@ -598,10 +760,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   reminderBox: {
-    margin: 12,
-    borderRadius: 10,
+    marginHorizontal: 12,
+    marginTop: 10,
+    borderRadius: 14,
     backgroundColor: '#fff4e5',
     padding: 12,
+    borderWidth: 1,
+    borderColor: '#fde7bf',
   },
   dueTodayBox: {
     backgroundColor: '#fff3cd',
@@ -635,9 +800,9 @@ const styles = StyleSheet.create({
   },
   reminderBtn: {
     backgroundColor: '#25D366',
-    paddingVertical: 8,
+    paddingVertical: 7,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 10,
   },
   reminderBtnText: {
     color: 'white',
@@ -645,7 +810,7 @@ const styles = StyleSheet.create({
   },
   cardActionsRow: {
     marginHorizontal: 15,
-    marginTop: -2,
+    marginTop: 2,
     marginBottom: 6,
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -689,9 +854,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginBottom: 8,
     backgroundColor: '#ffffff',
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#e7e7e7',
+    borderColor: '#e2e8f0',
     padding: 10,
   },
   itemsTitle: {
@@ -707,10 +872,10 @@ const styles = StyleSheet.create({
   },
   clearedActionsRow: {
     marginHorizontal: 15,
-    marginTop: -2,
+    marginTop: 2,
     marginBottom: 8,
     backgroundColor: '#eef8ef',
-    borderRadius: 8,
+    borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
     flexDirection: 'row',

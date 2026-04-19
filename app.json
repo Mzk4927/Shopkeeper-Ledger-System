@@ -19,6 +19,11 @@
     ],
     "cli": {
       "appVersionSource": "appJson"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8c9c903a-7a9c-4c2a-8d8f-d04c6adce1ba"
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DashboardScreen from './src/screens/DashboardScreen';
@@ -8,6 +9,11 @@ import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import { getCurrentSessionUser, initDB, signOutShopkeeper } from './src/database/db';
 
 const Stack = createNativeStackNavigator();
+
+LogBox.ignoreLogs([
+  'Method writeAsStringAsync imported from "expo-file-system" is deprecated.',
+  'Method readAsStringAsync imported from "expo-file-system" is deprecated.',
+]);
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);

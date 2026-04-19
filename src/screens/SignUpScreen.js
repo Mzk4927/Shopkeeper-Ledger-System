@@ -44,43 +44,75 @@ export default function SignUpScreen({ navigation, onSignedUp }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Shopkeeper Sign Up</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Shopkeeper Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+      <View style={styles.bgAccentTop} />
+      <View style={styles.bgAccentBottom} />
+      <View style={styles.card}>
+        <View style={styles.brandMark}>
+          <Text style={styles.brandMarkText}>KH</Text>
+        </View>
+        <View style={styles.headerBlock}>
+          <Text style={styles.kicker}>Account setup</Text>
+          <Text style={styles.title}>Create your account</Text>
+          <Text style={styles.subtitle}>
+            Add your name, email, and password to start using the app.
+          </Text>
+        </View>
 
-      <TouchableOpacity style={styles.primaryBtn} onPress={handleSignUp} disabled={loading}>
-        <Text style={styles.primaryBtnText}>{loading ? 'Creating...' : 'Sign Up'}</Text>
-      </TouchableOpacity>
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your name"
+            autoComplete="name"
+            value={name}
+            onChangeText={setName}
+          />
+        </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-        <Text style={styles.link}>Already have account? Sign In</Text>
-      </TouchableOpacity>
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email address"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Create a password"
+            secureTextEntry
+            autoComplete="password-new"
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        <View style={styles.fieldBlock}>
+          <Text style={styles.label}>Confirm password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Re-enter password"
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+        </View>
+
+        <TouchableOpacity style={styles.primaryBtn} onPress={handleSignUp} disabled={loading}>
+          <Text style={styles.primaryBtnText}>{loading ? 'Creating...' : 'Create account'}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+          <Text style={styles.link}>Already have an account? Sign in</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -88,31 +120,104 @@ export default function SignUpScreen({ navigation, onSignedUp }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#eef2ff',
+    paddingHorizontal: 18,
+    overflow: 'hidden',
+  },
+  bgAccentTop: {
+    position: 'absolute',
+    width: 220,
+    height: 220,
+    borderRadius: 220,
+    backgroundColor: 'rgba(79, 70, 229, 0.08)',
+    top: -70,
+    right: -90,
+  },
+  bgAccentBottom: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 180,
+    backgroundColor: 'rgba(22, 163, 74, 0.08)',
+    bottom: -60,
+    left: -70,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 24,
+    padding: 22,
+    shadowColor: '#0f172a',
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 4,
+  },
+  brandMark: {
+    width: 56,
+    height: 56,
+    borderRadius: 18,
+    backgroundColor: '#111827',
+    alignSelf: 'center',
+    marginBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandMarkText: {
+    color: 'white',
+    fontWeight: '800',
+    fontSize: 18,
+    letterSpacing: 0.5,
+  },
+  headerBlock: {
+    marginBottom: 20,
+  },
+  kicker: {
+    fontSize: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+    color: '#4f46e5',
+    fontWeight: '700',
+    marginBottom: 6,
+    textAlign: 'center',
   },
   title: {
-    fontSize: 26,
-    fontWeight: '700',
+    fontSize: 28,
+    fontWeight: '800',
     color: '#0f172a',
-    marginBottom: 16,
+    marginBottom: 8,
     textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#64748b',
+    textAlign: 'center',
+  },
+  fieldBlock: {
+    marginBottom: 14,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#334155',
+    marginBottom: 6,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 10,
-    backgroundColor: 'white',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 10,
+    borderColor: '#cbd5e1',
+    borderRadius: 14,
+    backgroundColor: '#f8fafc',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: '#0f172a',
   },
   primaryBtn: {
-    marginTop: 6,
+    marginTop: 8,
     backgroundColor: '#16a34a',
-    borderRadius: 10,
-    paddingVertical: 12,
+    borderRadius: 14,
+    paddingVertical: 13,
     alignItems: 'center',
   },
   primaryBtnText: {
@@ -123,7 +228,7 @@ const styles = StyleSheet.create({
   link: {
     textAlign: 'center',
     color: '#1d4ed8',
-    marginTop: 12,
+    marginTop: 16,
     fontWeight: '600',
   },
 });
