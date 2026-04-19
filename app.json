@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Khata App",
+    "slug": "khata-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.zarar.khataapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "YOUR-PROJECT-ID-HERE"
+      }
+    },
+    "plugins": [
+      "expo-sharing"
+    ]
+  }
+}
